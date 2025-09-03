@@ -12,8 +12,8 @@
                 alt="{{ $tenant->account?->name ?? $tenant->id }}">
 
             <div class="flex-1">
-                <p class="text-sm text-gray-500 dark:text-gray-400">
-                    {{ config('app.name') }}
+                <p class="text-sm text-gray-500 dark:text-gray-400" title="{{ config('app.name') }}">
+                    {{ LimitCharsFromString(string: config('app.name'), numChars: 28) }}
                 </p>
 
                 <h2 class="grid flex-1 text-base font-semibold leading-6 text-gray-950 dark:text-white">

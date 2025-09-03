@@ -36,6 +36,14 @@ class EditUser extends EditRecord
     {
         $data['email_confirmation'] = $data['email'];
 
+        $data['teams']['coordinators'] = $this->record->coordinatorTeams()
+            ->pluck('id')
+            ->toArray();
+
+        $data['teams']['collaborators'] = $this->record->collaboratorTeams()
+            ->pluck('id')
+            ->toArray();
+
         $data['address']['zipcode'] = $this->record->address?->zipcode;
         $data['address']['uf'] = $this->record->address?->uf?->name;
         $data['address']['city'] = $this->record->address?->city;
@@ -65,6 +73,8 @@ class EditUser extends EditRecord
     {
         $this->record->load([
             'roles:id,name',
+            'coordinatorTeams:id,name',
+            'collaboratorTeams:id,name',
             'address'
         ]);
 
@@ -74,7 +84,35 @@ class EditUser extends EditRecord
 
     protected function afterSave(): void
     {
+        $this->syncTeams();
         $this->updateAddress();
+
+        $this->logActivity();
+    }
+
+    protected function syncTeams(): void
+    {
+        // Sync coordinators
+        // 3 - Administrador, 4 - Líder, 5 - Coordenador
+        $data = empty(array_intersect([3, 4, 5], $this->data['roles']))
+            ? []
+            : collect($this->data['teams']['coordinators'])
+            ->mapWithKeys(fn($id) => [$id => ['role' => 1]]) // 1 = Coordenador
+            ->all();
+
+        $this->record->coordinatorTeams()
+            ->sync($data);
+
+        // Sync collaborators
+        // 6 - Colaborador
+        $data = !in_array(6, $this->data['roles'])
+            ? []
+            : collect($this->data['teams']['collaborators'])
+            ->mapWithKeys(fn($id) => [$id => ['role' => 2]]) // 2 = Colaborador
+            ->all();
+
+        $this->record->collaboratorTeams()
+            ->sync($data);
     }
 
     protected function updateAddress(): void
@@ -95,6 +133,8 @@ class EditUser extends EditRecord
     {
         $this->record->load([
             'roles:id,name',
+            'coordinatorTeams:id,name',
+            'collaboratorTeams:id,name',
             'address'
         ]);
 

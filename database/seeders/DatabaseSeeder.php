@@ -3,7 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\System\Tenant;
+use Database\Seeders\System\AgenciesSeeder;
 use Database\Seeders\System\RolesAndPermissionsSeeder;
+use Database\Seeders\System\TeamsSeeder;
 use Database\Seeders\System\TenantCategoriesSeeder;
 use Database\Seeders\System\TenantPlansSeeder;
 use Database\Seeders\System\TenantRolesAndPermissionsSeeder;
@@ -26,6 +28,8 @@ class DatabaseSeeder extends Seeder
             $this->call([
                 TenantRolesAndPermissionsSeeder::class,
                 UsersSeeder::class,
+                AgenciesSeeder::class,
+                TeamsSeeder::class,
             ]);
 
             return;

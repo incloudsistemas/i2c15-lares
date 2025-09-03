@@ -1,13 +1,12 @@
 <x-filament-widgets::widget class="fi-filament-info-widget">
     <x-filament::section>
-        <div class="flex items-center gap-x-3 py-1">
-            <img src="{{ asset('images/i2c-logo.png') }}" width="65" title="InCloudCodile15"
-                alt="InCloudCodile15" />
-
-            <div class="flex-1">
-                <h2 class="grid flex-1 text-base font-semibold leading-6 text-gray-500 dark:text-white">
-                    InCloudCodile15
-                </h2>
+        <div class="flex items-center justify-between gap-x-3 py-0">
+            <div class="flex items-center gap-x-2">
+                <img src="{{ asset('images/app-logo.png') }}" width="45" title="Lares" alt="Lares" />
+                <span class="text-sm font-medium tracking-wider text-gray-500 dark:text-gray-400">
+                    Lares <br />
+                    <span class="text-xs">Site e CRM Imobiliário</span>
+                </span>
             </div>
 
             <div class="flex flex-col items-end gap-y-1">

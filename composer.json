@@ -1,8 +1,8 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/i2c15-multi-database-tenancy-starter-kit",
+    "name": "incloudsistemas/i2c15-lares",
     "type": "project",
-    "description": "The InCloud multi database tenancy skeleton engine application for the InCloudCodile15.",
+    "description": "Real Estate Hub - Website (CMS), CRM, Financial and Marketing Automation.",
     "keywords": [
         "framework",
         "laravel",

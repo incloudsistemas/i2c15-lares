@@ -29,10 +29,53 @@ class UserService extends BaseService
         return $query->whereRaw("JSON_EXTRACT(phones, '$[0].number') LIKE ?", ["%$search%"]);
     }
 
-    public function getUserByEmail(?string $email): ?User
+    public function getUserOptionsBySearch(?string $search, ?array $roles = null): array
     {
-        return $this->user->where('email', $email)
-            ->first();
+        $user = auth()->user();
+
+        $query = $this->user->byStatuses(statuses: [1]) // 1 - Ativo
+            ->where(function (Builder $query) use ($search): Builder {
+                return $query->where('cpf', 'like', "%{$search}%")
+                    ->orWhereRaw("REPLACE(REPLACE(REPLACE(cpf, '.', ''), '-', ''), '/', '') LIKE ?", ["%{$search}%"])
+                    ->orWhere('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            })
+            ->when($roles, function (Builder $query) use ($roles): Builder {
+                return $query->whereHas('roles', function (Builder $query) use ($roles): Builder {
+                    return $query->whereIn('id', $roles);
+                });
+            });
+
+        if (!$user->hasAnyRole(['Superadministrador', 'Administrador'])) {
+            $usersIds = $this->getOwnedUsersByAuthUserRolesAgenciesAndTeams(user: $user);
+            $query->whereIn('id', $usersIds);
+        }
+
+        return $query->limit(50)
+            ->get()
+            ->mapWithKeys(function (User $user): array {
+                $label = $user->name . ($user->cpf ? " - {$user->cpf}" : '');
+                return [$user->id => $label];
+            })
+            ->toArray();
+    }
+
+    // Single
+    public function getUserOptionLabel(?int $value): ?string
+    {
+        return $this->user->find($value)?->name;
+    }
+
+    // Multiple
+    public function getUserOptionLabels(array $values): array
+    {
+        return $this->user->whereIn('id', $values)
+            ->get()
+            ->mapWithKeys(
+                fn(User $user): array =>
+                [$user->id => $user->name],
+            )
+            ->toArray();
     }
 
     /**
@@ -54,17 +97,6 @@ class UserService extends BaseService
             // $action->cancel();
             $action->halt();
         }
-
-        if ($this->isTenantOwner(user: $user)) {
-            Notification::make()
-                ->title($title)
-                ->warning()
-                ->body(__('Este usuário possui contas de clientes associadas. Para excluir, você deve primeiro desvincular todas as contas que estão associadas a ele.'))
-                ->send();
-
-            // $action->cancel();
-            $action->halt();
-        }
     }
 
     public function deleteBulkAction(Collection $records): void
@@ -73,10 +105,7 @@ class UserService extends BaseService
         $allowed = [];
 
         foreach ($records as $user) {
-            if (
-                $this->isUserHimself(user: $user) ||
-                $this->isTenantOwner(user: $user)
-            ) {
+            if ($this->isUserHimself(user: $user)) {
                 $blocked[] = $user->name;
                 continue;
             }
@@ -114,11 +143,5 @@ class UserService extends BaseService
     protected function isUserHimself(User $user): bool
     {
         return auth()->id() === $user->id;
-    }
-
-    protected function isTenantOwner(User $user): bool
-    {
-        return $user->ownTenants()
-            ->exists();
     }
 }

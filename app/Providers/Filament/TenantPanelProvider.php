@@ -36,8 +36,8 @@ class TenantPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Yellow,
             ])
-            ->favicon(url: asset('images/i2c-favicon.ico'))
-            ->brandLogo(asset('images/i2c-logo.png'))
+            ->favicon(url: asset('images/app-favicon.ico'))
+            ->brandLogo(asset('images/app-logo.png'))
             ->brandLogoHeight('2rem')
             ->sidebarCollapsibleOnDesktop()
             ->profile(EditProfile::class)

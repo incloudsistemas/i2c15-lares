@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\System\Team;
 use App\Models\System\TenantAccount;
+use App\Models\System\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\ValidationException;
 
@@ -172,5 +174,47 @@ abstract class BaseService
         }
 
         return implode(' | ', $parts);
+    }
+
+    public function getOwnedUsersByAuthUserRolesAgenciesAndTeams(User $user): array
+    {
+        $usersIds = [$user->id];
+
+        // Logic for Coordinators and Leaders
+        if ($user->hasAnyRole(['Líder', 'Coordenador'])) {
+            // Get users from teams where the user is a coordinator
+            $teamUsersIds = $user->coordinatorTeams()
+                ->with('users:id')
+                ->get()
+                ->pluck('users.*.id')
+                ->flatten()
+                ->toArray();
+
+            $usersIds = array_merge($usersIds, $teamUsersIds);
+
+            // Additional logic for Leaders (access to all agency teams)
+            if ($user->hasRole('Líder')) {
+                $agenciesIds = $user->agencies()
+                    ->pluck('id')
+                    ->toArray();
+
+                $agTeamsIds = Team::whereIn('agency_id', $agenciesIds)
+                    ->pluck('id')
+                    ->toArray();
+
+                $agTeamsUsersIds = User::whereHas(
+                    'teams',
+                    fn(Builder $query): Builder => $query->whereIn('id', $agTeamsIds)
+                )
+                    ->pluck('id')
+                    ->toArray();
+
+                $usersIds = array_merge($usersIds, $agTeamsUsersIds);
+            }
+
+            $usersIds = array_unique($usersIds);
+        }
+
+        return $usersIds;
     }
 }

@@ -18,6 +18,8 @@ use Filament\Panel;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -112,6 +114,72 @@ class User extends Authenticatable implements FilamentUser, HasMedia
      * RELATIONSHIPS.
      *
      */
+
+    // public function activities(): BelongsToMany
+    // {
+    //     return $this->belongsToMany(
+    //         related: Activity::class,
+    //         table: 'activity_user',
+    //         foreignPivotKey: 'user_id',
+    //         relatedPivotKey: 'activity_id'
+    //     );
+    // }
+
+    // public function ownActivities(): HasMany
+    // {
+    //     return $this->hasMany(related: Activity::class, foreignKey: 'user_id');
+    // }
+
+    // public function financialTransactions(): HasMany
+    // {
+    //     return $this->hasMany(related: Transaction::class, foreignKey: 'user_id');
+    // }
+
+    // public function business(): BelongsToMany
+    // {
+    //     return $this->belongsToMany(
+    //         related: Business::class,
+    //         table: 'crm_business_user',
+    //         foreignPivotKey: 'user_id',
+    //         relatedPivotKey: 'business_id'
+    //     )
+    //         ->withPivot(columns: 'business_at');
+    // }
+
+    // public function ownBusiness(): HasMany
+    // {
+    //     return $this->hasMany(related: Business::class, foreignKey: 'user_id');
+    // }
+
+    // public function contacts(): HasMany
+    // {
+    //     return $this->hasMany(related: Contact::class);
+    // }
+
+    public function collaboratorTeams(): BelongsToMany
+    {
+        return $this->belongsToMany(related: Team::class)
+            ->withPivot(columns: 'role')
+            ->wherePivot(column: 'role', operator: 2); // 2 - Collaborator
+    }
+
+    public function coordinatorTeams(): BelongsToMany
+    {
+        return $this->belongsToMany(related: Team::class)
+            ->withPivot(columns: 'role')
+            ->wherePivot(column: 'role', operator: 1); // 1 - Coordenador
+    }
+
+    public function teams(): BelongsToMany
+    {
+        return $this->belongsToMany(related: Team::class)
+            ->withPivot(columns: 'role');
+    }
+
+    public function agencies(): BelongsToMany
+    {
+        return $this->belongsToMany(related: Agency::class);
+    }
 
     public function address(): MorphOne
     {

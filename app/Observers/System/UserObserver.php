@@ -27,6 +27,8 @@ class UserObserver
     {
         $user->load([
             'roles:id,name',
+            'coordinatorTeams:id,name',
+            'collaboratorTeams:id,name',
             'address'
         ]);
 

@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://incloudsistemas.com.br" target="_blank">
-    <img src="https://github.com/incloudsistemas/i2c15-lares/blob/main/public/images/i2c-logo-large.png" alt="The i2c | InCloud skeleton engine application logo.">
+    <img src="https://github.com/incloudsistemas/i2c15-lares/blob/main/public/images/app-logo-large.png" alt="The i2c | InCloud skeleton engine application logo.">
   </a>
 </p>
 

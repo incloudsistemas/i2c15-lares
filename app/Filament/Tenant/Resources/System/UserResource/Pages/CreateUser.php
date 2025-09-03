@@ -28,9 +28,37 @@ class CreateUser extends CreateRecord
 
     protected function afterCreate(): void
     {
+        $this->attachTeams();
         $this->createAddress();
 
         $this->logActivity();
+    }
+
+    protected function attachTeams(): void
+    {
+        // Attach coordinators
+        if (!empty($this->data['teams']['coordinators'])) {
+            $data = collect($this->data['teams']['coordinators'])
+                ->mapWithKeys(function ($id) {
+                    return [$id => ['role' => 1]]; // 1 = Coordenador
+                })
+                ->all();
+
+            $this->record->coordinatorTeams()
+                ->attach($data);
+        }
+
+        // Attach collaborators
+        if (!empty($this->data['teams']['collaborators'])) {
+            $data = collect($this->data['teams']['collaborators'])
+                ->mapWithKeys(function ($id) {
+                    return [$id => ['role' => 2]]; // 2 = Colaborador
+                })
+                ->all();
+
+            $this->record->collaboratorTeams()
+                ->attach($data);
+        }
     }
 
     protected function createAddress(): void
@@ -45,6 +73,8 @@ class CreateUser extends CreateRecord
     {
         $this->record->load([
             'roles:id,name',
+            'coordinatorTeams:id,name',
+            'collaboratorTeams:id,name',
             'address'
         ]);
 

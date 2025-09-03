@@ -13,6 +13,7 @@ use App\Filament\Tenant\Resources\System\UserResource\RelationManagers;
 use App\Models\System\User;
 use App\Services\Polymorphics\AddressService;
 use App\Services\System\RoleService;
+use App\Services\System\TeamService;
 use App\Services\System\UserService;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -41,7 +42,7 @@ class UserResource extends Resource
 
     protected static ?string $navigationGroup = 'Sistema';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $navigationIcon = 'heroicon-o-user-plus';
 
@@ -203,7 +204,7 @@ class UserResource extends Resource
                     ->searchable()
                     ->preload()
                     ->required()
-                    // ->live()
+                    ->live()
                     ->columnSpanFull(),
                 Forms\Components\TextInput::make('password')
                     ->label(__('Senha'))
@@ -232,6 +233,42 @@ class UserResource extends Resource
                     )
                     ->maxLength(255)
                     ->dehydrated(false),
+                Forms\Components\Select::make('teams.coordinators')
+                    ->label(__('Equipe(s) como coordenador'))
+                    ->helperText(__('Deseja vincular este usuário à(s) equipe(s) como coordenador?'))
+                    ->options(
+                        fn (TeamService $service): array =>
+                        $service->getOptionsByTeamsGroupedByAgencies(),
+                    )
+                    ->multiple()
+                    // ->selectablePlaceholder(false)
+                    ->native(false)
+                    ->searchable()
+                    ->preload()
+                    ->hidden(
+                        fn (callable $get): bool =>
+                        // 3 - Administrador, 4 - Líder, 5 - Coordenador
+                        empty(array_intersect([3, 4, 5], $get('roles')))
+                    )
+                    ->columnSpanFull(),
+                Forms\Components\Select::make('teams.collaborators')
+                    ->label(__('Equipe(s) como colaborador'))
+                    ->helperText(__('Deseja vincular este usuário à(s) equipe(s) como colaborador?'))
+                    ->options(
+                        fn (TeamService $service): array =>
+                        $service->getOptionsByTeamsGroupedByAgencies(),
+                    )
+                    ->multiple()
+                    // ->selectablePlaceholder(false)
+                    ->native(false)
+                    ->searchable()
+                    ->preload()
+                    ->hidden(
+                        fn (callable $get): bool =>
+                        // 6 - Colaborador
+                        !in_array(6, $get('roles'))
+                    )
+                    ->columnSpanFull(),
                 Forms\Components\Select::make('status')
                     ->label(__('Status'))
                     ->options(UserStatusEnum::class)
@@ -482,6 +519,12 @@ class UserResource extends Resource
                 ->searchable()
                 // ->sortable()
                 ->toggleable(isToggledHiddenByDefault: false),
+            Tables\Columns\TextColumn::make('teams.name')
+                ->label(__('Equipe(s)'))
+                ->badge()
+                ->searchable()
+                // ->sortable()
+                ->toggleable(isToggledHiddenByDefault: true),
             Tables\Columns\TextColumn::make('email')
                 ->label(__('Email'))
                 ->searchable()
@@ -530,6 +573,16 @@ class UserResource extends Resource
                     titleAttribute: 'name',
                     modifyQueryUsing: fn(RoleService $service, Builder $query): Builder =>
                     $service->getQueryByAuthUserRoles(query: $query)
+                )
+                ->multiple()
+                ->preload(),
+            Tables\Filters\SelectFilter::make('teams')
+                ->label(__('Equipe(s)'))
+                ->relationship(
+                    name: 'teams',
+                    titleAttribute: 'name',
+                    modifyQueryUsing: fn(Builder $query): Builder =>
+                    $query->orderBy('name', 'asc')
                 )
                 ->multiple()
                 ->preload(),
