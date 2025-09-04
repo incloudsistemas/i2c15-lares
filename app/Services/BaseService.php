@@ -6,6 +6,7 @@ use App\Models\System\Team;
 use App\Models\System\TenantAccount;
 use App\Models\System\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 abstract class BaseService
@@ -178,43 +179,42 @@ abstract class BaseService
 
     public function getOwnedUsersByAuthUserRolesAgenciesAndTeams(User $user): array
     {
-        $usersIds = [$user->id];
+        $ids = [$user->id];
 
-        // Logic for Coordinators and Leaders
         if ($user->hasAnyRole(['Líder', 'Coordenador'])) {
-            // Get users from teams where the user is a coordinator
-            $teamUsersIds = $user->coordinatorTeams()
-                ->with('users:id')
-                ->get()
-                ->pluck('users.*.id')
-                ->flatten()
-                ->toArray();
+            // Users from teams in which is a coordinator (via pivot)
+            $coordinatorTeamIds = $user->coordinatorTeams()
+                ->toBase()
+                ->pluck('teams.id');
 
-            $usersIds = array_merge($usersIds, $teamUsersIds);
+            $ids = array_merge(
+                $ids,
+                DB::table('team_user')
+                    ->whereIn('team_id', $coordinatorTeamIds)
+                    ->pluck('user_id')
+                    ->all()
+            );
 
-            // Additional logic for Leaders (access to all agency teams)
+            // If Leader: all teams from your agencies
             if ($user->hasRole('Líder')) {
-                $agenciesIds = $user->agencies()
-                    ->pluck('id')
-                    ->toArray();
+                $agencyTeamIds = $user->agencies()
+                    ->join('teams', 'agencies.id', '=', 'teams.agency_id')
+                    ->toBase()
+                    ->pluck('teams.id');
 
-                $agTeamsIds = Team::whereIn('agency_id', $agenciesIds)
-                    ->pluck('id')
-                    ->toArray();
-
-                $agTeamsUsersIds = User::whereHas(
-                    'teams',
-                    fn(Builder $query): Builder => $query->whereIn('id', $agTeamsIds)
-                )
-                    ->pluck('id')
-                    ->toArray();
-
-                $usersIds = array_merge($usersIds, $agTeamsUsersIds);
+                $ids = array_merge(
+                    $ids,
+                    DB::table('team_user')
+                        ->whereIn('team_id', $agencyTeamIds)
+                        ->pluck('user_id')
+                        ->all()
+                );
             }
-
-            $usersIds = array_unique($usersIds);
         }
 
-        return $usersIds;
+        // Normalize: int + unique
+        $ids = array_values(array_unique(array_map('intval', $ids)));
+
+        return $ids;
     }
 }

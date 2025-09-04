@@ -3,6 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\System\Tenant;
+use Database\Seeders\Crm\Contacts\ContactsSeeder;
+use Database\Seeders\Crm\Contacts\RolesSeeder as ContactRolesSeeder;
+use Database\Seeders\Crm\SourcesSeeder;
 use Database\Seeders\System\AgenciesSeeder;
 use Database\Seeders\System\RolesAndPermissionsSeeder;
 use Database\Seeders\System\TeamsSeeder;
@@ -30,6 +33,10 @@ class DatabaseSeeder extends Seeder
                 UsersSeeder::class,
                 AgenciesSeeder::class,
                 TeamsSeeder::class,
+
+                ContactRolesSeeder::class,
+                SourcesSeeder::class,
+                ContactsSeeder::class,
             ]);
 
             return;

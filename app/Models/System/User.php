@@ -9,6 +9,7 @@ use App\Enums\ProfileInfos\EducationalLevelEnum;
 use App\Enums\ProfileInfos\GenderEnum;
 use App\Enums\ProfileInfos\MaritalStatusEnum;
 use App\Enums\ProfileInfos\UserStatusEnum;
+use App\Models\Crm\Contacts\Contact;
 use App\Models\Polymorphics\Address;
 use App\Observers\System\UserObserver;
 use App\Services\System\RoleService;
@@ -151,10 +152,10 @@ class User extends Authenticatable implements FilamentUser, HasMedia
     //     return $this->hasMany(related: Business::class, foreignKey: 'user_id');
     // }
 
-    // public function contacts(): HasMany
-    // {
-    //     return $this->hasMany(related: Contact::class);
-    // }
+    public function contacts(): HasMany
+    {
+        return $this->hasMany(related: Contact::class);
+    }
 
     public function collaboratorTeams(): BelongsToMany
     {

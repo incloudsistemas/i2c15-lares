@@ -33,11 +33,11 @@ class AppServiceProvider extends ServiceProvider
             'agencies'          => 'App\Models\System\Agency',
             'teams'             => 'App\Models\System\Team',
 
-            // 'crm_sources'                => 'App\Models\Crm\Source',
-            // 'crm_contact_roles'          => 'App\Models\Crm\Contacts\Role',
-            // 'crm_contacts'               => 'App\Models\Crm\Contacts\Contact',
-            // 'crm_contact_individuals'    => 'App\Models\Crm\Contacts\Individual',
-            // 'crm_contact_legal_entities' => 'App\Models\Crm\Contacts\LegalEntity',
+            'crm_sources'                => 'App\Models\Crm\Source',
+            'crm_contact_roles'          => 'App\Models\Crm\Contacts\Role',
+            'crm_contacts'               => 'App\Models\Crm\Contacts\Contact',
+            'crm_contact_individuals'    => 'App\Models\Crm\Contacts\Individual',
+            'crm_contact_legal_entities' => 'App\Models\Crm\Contacts\LegalEntity',
 
             // 'crm_funnels'                => 'App\Models\Crm\Funnels\Funnel',
             // 'crm_funnel_stages'          => 'App\Models\Crm\Funnels\FunnelStage',

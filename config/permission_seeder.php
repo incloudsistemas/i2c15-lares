@@ -40,9 +40,9 @@ return [
                 'Agências'          => 'c,r,u,d',
                 'Equipes'           => 'c,r,u,d',
 
-                // '[CRM] Origens dos Contatos/Negócios' => 'c,r,u,d',
-                // '[CRM] Tipos de Contatos'             => 'c,r,u,d',
-                // '[CRM] Contatos'                      => 'c,r,u,d',
+                '[CRM] Origens dos Contatos/Negócios' => 'c,r,u,d',
+                '[CRM] Tipos de Contatos'             => 'c,r,u,d',
+                '[CRM] Contatos'                      => 'c,r,u,d',
                 // '[CRM] Funis de Negócios'             => 'c,r,u,d',
                 // '[CRM] Negócios'                      => 'c,r,u,d',
                 // '[CRM] Filas'                         => 'c,r,u,d',
@@ -77,9 +77,9 @@ return [
                 'Agências'          => 'c,r,u,d',
                 'Equipes'           => 'c,r,u,d',
 
-                // '[CRM] Origens dos Contatos/Negócios' => 'c,r,u,d',
-                // '[CRM] Tipos de Contatos'             => 'c,r,u,d',
-                // '[CRM] Contatos'                      => 'c,r,u,d',
+                '[CRM] Origens dos Contatos/Negócios' => 'c,r,u,d',
+                '[CRM] Tipos de Contatos'             => 'c,r,u,d',
+                '[CRM] Contatos'                      => 'c,r,u,d',
                 // '[CRM] Funis de Negócios'             => 'c,r,u,d',
                 // '[CRM] Negócios'                      => 'c,r,u,d',
                 // '[CRM] Filas'                         => 'c,r,u,d',
@@ -106,7 +106,7 @@ return [
                 // '[CMS] Sliders'         => 'c,r,u,d',
             ],
             'Líder' => [
-                // '[CRM] Contatos' => 'c,r,u,d',
+                '[CRM] Contatos' => 'c,r,u,d',
                 // '[CRM] Negócios' => 'c,r,u,d',
 
                 // // '[IMB] Tipos de Imóveis'             => 'c,r,u,d',
@@ -116,7 +116,7 @@ return [
                 // '[IMB] Lançamentos'                  => 'c,r,u,d',
             ],
             'Coordenador' => [
-                // '[CRM] Contatos' => 'c,r,u,d',
+                '[CRM] Contatos' => 'c,r,u,d',
                 // '[CRM] Negócios' => 'c,r,u,d',
 
                 // // '[IMB] Tipos de Imóveis'             => 'c,r,u,d',
@@ -126,7 +126,7 @@ return [
                 // '[IMB] Lançamentos'                  => 'c,r,u,d',
             ],
             'Corretor' => [
-                // '[CRM] Contatos' => 'c,r,u,d',
+                '[CRM] Contatos' => 'c,r,u,d',
                 // '[CRM] Negócios' => 'c,r,u,d',
 
                 // // '[IMB] Tipos de Imóveis'             => 'c,r,u,d',
